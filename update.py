@@ -1,13 +1,14 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-# In[1]:
+# In[4]:
 
 
 import requests
 import pandas as pd
 import requests
 from bs4 import BeautifulSoup
+import datetime
 
 api = 'http://site.api.espn.com/apis/site/v2/sports/basketball/nba/scoreboard'
 
@@ -104,6 +105,7 @@ html_header = f'''
         {all_tables}
     </div>
     <br>
+    <p class="last-updated">Last updated: {datetime.datetime.now()}</p>
     <img src="https://cdn.freebiesupply.com/images/large/2x/espn-logo-transparent.png" alt="ESPN" width="500">
 </div>
 '''
@@ -121,10 +123,4 @@ all_html = html_header + html_footer
 with open('index.html', 'w') as f:
     f.write(all_html)
     f.close()
-
-
-# In[ ]:
-
-
-
 

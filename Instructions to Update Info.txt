@@ -1,5 +1,5 @@
 Set-Location "C:\Users\Owner\Desktop\redunoreverse.github.io"
 python updatev2.py
-git add index.html
+git add index1.html
 git commit -m "Updated Scores"
 git push origin main

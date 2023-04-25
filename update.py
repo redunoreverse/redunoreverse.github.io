@@ -1,9 +1,6 @@
 #!/usr/bin/env python
 # coding: utf-8
-
-# In[1]:
-
-
+# %%
 import requests
 import pandas as pd
 import requests
@@ -12,7 +9,7 @@ import datetime
 
 api = 'http://site.api.espn.com/apis/site/v2/sports/basketball/nba/scoreboard'
 
-teams = ['ATL', 'BOS', 'BKN', 'CHA', 'CHI', 'CLE', 'DAL', 'DEN', 'DET', 'GSW', 'HOU', 'IND', 'LAC', 'LAL', 'MEM', 'MIA', 'MIL', 'MIN', 'NOP', 'NYK', 'OKC', 'ORL', 'PHI', 'PHX', 'POR', 'SAC', 'SAS', 'TOR', 'UTA', 'WAS']
+teams = ['ATL', 'BOS', 'BKN', 'CHA', 'CHI', 'CLE', 'DAL', 'DEN', 'DET', 'GS', 'HOU', 'IND', 'LAC', 'LAL', 'MEM', 'MIA', 'MIL', 'MIN', 'NOP', 'NY', 'OKC', 'ORL', 'PHI', 'PHX', 'POR', 'SAC', 'SAS', 'TOR', 'UTA', 'WAS']
 url_template = 'https://a.espncdn.com/combiner/i?img=/i/teamlogos/nba/500/{}.png&h=200&w=200'
 team_urls = {team: url_template.format(team.lower()) for team in teams}
 
@@ -51,8 +48,15 @@ for link in links:
             rows.append(row_data)
 
     # Create the DataFrame
-    df = pd.DataFrame(rows, columns=["Team", "Q1", "Q2", "Q3", "Q4", "Total"])
-    dfs[df["Team"][0] + " vs " + df["Team"][1]] = df
+    if 'OT' in headers:
+        df = pd.DataFrame(rows, columns=["Team", "Q1", "Q2", "Q3", "Q4", "OT", "Total"])
+        dfs[df["Team"][0] + " vs " + df["Team"][1]] = df
+    elif ('OT1' and 'OT2') in headers:
+        df = pd.DataFrame(rows, columns=["Team", "Q1", "Q2", "Q3", "Q4", "OT1", "OT2", "Total"])
+        dfs[df["Team"][0] + " vs " + df["Team"][1]] = df
+    else:
+        df = pd.DataFrame(rows, columns=["Team", "Q1", "Q2", "Q3", "Q4", "Total"])
+        dfs[df["Team"][0] + " vs " + df["Team"][1]] = df
 
 # Webpage Stuff    
 html_tables = []
@@ -89,7 +93,6 @@ for i, (name, df) in enumerate(dfs.items()):
 # Combine all HTML tables into a single string
 all_tables = ''.join(html_tables)
 
-# Create HTML header with title and images
 # Create HTML header with title and images
 html_header = f'''
 <!DOCTYPE html>
@@ -136,31 +139,22 @@ table {{
     <h1>NBA Scoreboard</h1>
     <img src="https://cdn.freebiesupply.com/images/large/2x/nba-logo-transparent.png" alt="NBA Logo" height="400" style="display: block; margin: 0 auto;">
     <h2>Boxscores</h2>
-    <div class="table-row">
-        {html_tables[0]}
-        {html_tables[1]}
-    </div>
-    <div class="table-row">
-        {html_tables[2]}
-        {html_tables[3]}
-    </div>
-    <br>
-    <p class="last-updated">Last updated: {datetime.datetime.now()}</p>
-    <img src="https://cdn.freebiesupply.com/images/large/2x/espn-logo-transparent.png" alt="ESPN" width="325" style="display: block; margin: 0 auto; margin-center: 0px;">
-</div>
 '''
 
-# Create HTML footer to close the document
-html_footer = '''
-</body>
-</html>
-'''
+# Add the tables to the HTML header
+table_count = len(html_tables)
+if table_count == 1:
+    all_html = html_header + f'<div class="table-row">{html_tables[0]}</div>'
+else:
+    table_row_html = ''.join([f'<div class="table">{table_html}</div>' for table_html in html_tables])
+    all_html = html_header + f'<div class="table-row">{table_row_html}</div>'
 
-# Combine the header, tables, and footer into a single string
-all_html = html_header + html_footer
+# Add the last updated time and footer to the HTML
+all_html += f'<br><p class="last-updated">Last updated: {datetime.datetime.now()}</p>'
+all_html += '<img src="https://cdn.freebiesupply.com/images/large/2x/espn-logo-transparent.png" alt="ESPN" width="325" style="display: block; margin: 0 auto; margin-center: 0px;"></div></body></html>'
 
 # Save combined HTML tables into a new file
-with open('index1.html', 'w') as f:
+with open('index.html', 'w') as f:
     f.write(all_html)
     f.close()
 

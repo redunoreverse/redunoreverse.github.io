@@ -1,4 +1,4 @@
-Set-Location "C:\Users\Owner\Desktop\redunoreverse.github.io"
+Set-Location "C:\Users\Owner\Desktop\Personal CS Projects\redunoreverse.github.io"
 python update.py
 git add index.html
 git commit -m "Updated Scores"

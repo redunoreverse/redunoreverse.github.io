@@ -10,7 +10,7 @@ import datetime
 api = 'http://site.api.espn.com/apis/site/v2/sports/basketball/nba/scoreboard'
 
 teams = ['ATL', 'BOS', 'BKN', 'CHA', 'CHI', 'CLE', 'DAL', 'DEN', 'DET', 'GS', 'HOU', 'IND', 'LAC', 'LAL', 'MEM', 'MIA', 'MIL', 'MIN', 'NOP', 'NY', 'OKC', 'ORL', 'PHI', 'PHX', 'POR', 'SAC', 'SAS', 'TOR', 'UTA', 'WAS']
-url_template = 'https://a.espncdn.com/combiner/i?img=/i/teamlogos/nba/500/{}.png&h=200&w=200'
+url_template = 'https://a.espncdn.com/i/teamlogos/nba/500/scoreboard/{}.png'
 team_urls = {team: url_template.format(team.lower()) for team in teams}
 
 jsonData = requests.get(api).json()
